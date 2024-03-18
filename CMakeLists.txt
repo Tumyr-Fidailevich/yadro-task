@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 3.15)
+project(tape)
+
+option(BUILD_TESTS OFF)
+
+set(SOURCES)
+set(HEADERS)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  googletest
+  URL
+  https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+FetchContent_MakeAvailable(googletest)
+
+FetchContent_Declare(
+  cxxopts
+  GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+  GIT_TAG        v2.2.1
+)
+FetchContent_MakeAvailable(cxxopts)
+
+add_library(tape-lib STATIC ${SOURCES} ${HEADERS})
+target_include_directories(tape-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_precompile_headers(tape-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/pch.h)
+
+add_executable(tape src/main.cpp)
+target_link_libraries(tape PUBLIC tape-lib cxxopts)
+
+
+if(BUILD_TESTS)
+    enable_testing()
+    set(TEST_SOURCES test/main.cpp)
+    add_executable(test-tape ${TEST_SOURCES})
+    target_link_libraries(test-tape PUBLIC tape-lib gtest_main)
+    include(GoogleTest)
+    gtest_discover_tests(test-tape)
+
+    include(CTest)
+    add_test(NAME all_tests COMMAND test-tape CONFIGURATION Debug)
+
+endif() # BUILD_TESTS
