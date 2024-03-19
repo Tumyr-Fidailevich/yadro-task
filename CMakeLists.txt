@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 project(tape)
 
+set(CMAKE_CXX_STANDARD 17)
+
 option(BUILD_TESTS OFF)
 
-set(SOURCES)
-set(HEADERS)
+set(SOURCES src/file_tape.cpp)
+set(HEADERS include/tape_interface.h include/file_tape.h)
 
 include(FetchContent)
 
