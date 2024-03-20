@@ -1,7 +1,50 @@
 #include <iostream>
-#include "some_header.h"
+#include <cxxopts.hpp>
 
 int main(int argc, char* argv[])
 {
-    return 0;
+    cxxopts::Options options("main", "Description");
+
+    options.add_options()
+        ("h,help", "Show help")
+        ("i,input", "Input file", cxxopts::value<std::string>())
+        ("o,output", "Output file", cxxopts::value<std::string>());
+
+    options.parse_positional({ "input", "output" });
+
+    try {
+        auto result = options.parse(argc, argv);
+
+        if (result.count("help")) {
+            std::cout << options.help() << std::endl;
+            return 0;
+        }
+
+        std::string input_file, output_file;
+
+        if (result.count("input")) {
+            input_file = result["input"].as<std::string>();
+        } else if (result.arguments().size() >= 2) {
+            input_file = result.arguments().at(1).as<std::string>();
+        } else {
+            std::cout << "Error: No input file specified." << std::endl;
+            return 1;
+        }
+
+        if (result.count("output")) {
+            output_file = result["output"].as<std::string>();
+        } else if (result.arguments().size() >= 3) {
+            output_file = result.arguments().at(2).as<std::string>();
+        } else {
+            output_file = "output.txt";
+        }
+
+        std::cout << "Input file: " << input_file << std::endl;
+        std::cout << "Output file: " << output_file << std::endl;
+
+        return 0;
+    } catch (const cxxopts::OptionException& e) {
+        std::cout << "Error parsing options: " << e.what() << std::endl;
+        return 1;
+    }
 }
