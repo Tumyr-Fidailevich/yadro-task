@@ -9,13 +9,13 @@ public:
 
     virtual void write(int) = 0;
 
-    virtual bool moveLeft() const = 0;
+    virtual bool move_left() const = 0;
 
-    virtual bool moveRight() const = 0;
+    virtual bool move_right() const = 0;
 
     void rewind() const
     {
-        while(moveLeft());
+        while(move_left());
     }
 
     virtual ~tape_interface() = default;
