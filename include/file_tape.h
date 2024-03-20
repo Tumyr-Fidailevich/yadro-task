@@ -20,6 +20,15 @@ public:
         std::chrono::milliseconds writeTime{0};
         std::chrono::milliseconds moveTime{0};
         std::chrono::milliseconds rewindTime{0};
+
+    protected:
+        std::pair<std::string, int> get_keyword_and_value(const std::string& str, std::size_t equals_pos);
+
+        inline void ltrim(std::string& s) noexcept;
+
+        inline void rtrim(std::string& s) noexcept;
+
+        inline void full_trim(std::string& s) noexcept;
     };
 
     file_tape(const std::filesystem::path& filepath, const config& cfg = {});
@@ -31,6 +40,8 @@ public:
     bool move_left() const override noexcept;
 
     bool move_right() const override noexcept;    
+
+    ~file_tape();
 
 private:
     config _config;
