@@ -4,7 +4,6 @@
 #include "pch.h"
 #include "tape_interface.h"
 
-static const std::filesystem DEFAULT_TAPE_CONFIG_PATH;
 
 class file_tape : public tape_interface
 {
@@ -13,7 +12,7 @@ public:
     {
         config() = default;
 
-        explicit config(const std::filesystem::path& filepath = DEFAULT_TAPE_CONFIG_PATH);
+        explicit config(const std::filesystem::path& filepath);
 
         explicit config(const config& other) = default;
 
