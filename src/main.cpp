@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
     options.add_options()
         ("h,help", "Show help")
         ("i,input", "Input file", cxxopts::value<std::string>())
-        ("o,output", "Output file", cxxopts::value<std::string>())
+        ("o,output", "Output file", cxxopts::value<std::string>()->default_value("output.txt"))
         ("c,config", "config file", cxxopts::value<std::string>());
 
     options.parse_positional({"input", "output", "config"});
@@ -36,8 +36,6 @@ int main(int argc, char* argv[])
             output_file = result["output"].as<std::string>();
         } else if (result.arguments().size() >= 3) {
             output_file = result.arguments().at(2).as<std::string>();
-        } else {
-            output_file = "output.txt";
         }
 
         if (result.count("config")) {
