@@ -8,9 +8,10 @@ int main(int argc, char* argv[])
     options.add_options()
         ("h,help", "Show help")
         ("i,input", "Input file", cxxopts::value<std::string>())
-        ("o,output", "Output file", cxxopts::value<std::string>());
+        ("o,output", "Output file", cxxopts::value<std::string>())
+        ("c,config", "config file", cxxopts::value<std::string>());
 
-    options.parse_positional({ "input", "output" });
+    options.parse_positional({"input", "output", "config"});
 
     try {
         auto result = options.parse(argc, argv);
@@ -20,7 +21,7 @@ int main(int argc, char* argv[])
             return 0;
         }
 
-        std::string input_file, output_file;
+        std::string input_file, output_file, config_file;
 
         if (result.count("input")) {
             input_file = result["input"].as<std::string>();
@@ -39,8 +40,13 @@ int main(int argc, char* argv[])
             output_file = "output.txt";
         }
 
+        if (result.count("config")) {
+            config_file = result["config"].as<std::string>();
+        }
+
         std::cout << "Input file: " << input_file << std::endl;
         std::cout << "Output file: " << output_file << std::endl;
+        std::cout << "Config file: " << config_file << std::endl;
 
         return 0;
     } catch (const cxxopts::OptionException& e) {
