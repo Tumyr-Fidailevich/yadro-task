@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         } else if (result.arguments().size() >= 2) {
             input_file = result.arguments().at(1).as<std::string>();
         } else {
-            std::cout << "Error: No input file specified." << std::endl;
+            std::cerr << "Error: No input file specified." << std::endl;
             return 1;
         }
 
@@ -44,8 +44,16 @@ int main(int argc, char* argv[])
         if (result.count("config")) {
             config_file = result["config"].as<std::string>();
         }
+        try
+        {
+            const auto tape_config = file_tape::config(config_file);
+        }
+        catch(const std::runtime_error& e)
+        {
+            std::cerr << e.what() << '\n';
+            std::cout << "Config set to default" << std::endl;
+        }
         
-        const auto tape_config = file_tape::config(config_file);
         const auto source_tape = file_tape(input_file, tape_config);
         auto dst_tape = file_tape(output_file, tape_config);
 
