@@ -5,15 +5,15 @@
 class tape_interface
 {    
 public:
-    virtual int read() const = 0;
+    virtual int read() const noexcept = 0;
 
-    virtual void write(int) = 0;
+    virtual void write(int) noexcept = 0;
 
-    virtual bool move_left() const = 0;
+    virtual bool move_left() const noexcept = 0;
 
-    virtual bool move_right() const = 0;
+    virtual bool move_right() const noexcept = 0;
 
-    void rewind() const
+    void rewind() const noexcept
     {
         while(move_left());
     }

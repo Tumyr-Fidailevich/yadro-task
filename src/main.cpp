@@ -1,7 +1,6 @@
 #include "file_tape.h"
 #include "tape_sorting.h"
 #include <cxxopts.hpp>
-#include <iostream>
 #include <csignal>
 
 
@@ -53,9 +52,12 @@ int main(int argc, char* argv[])
         if (result.count("config")) {
             config_file = result["config"].as<std::string>();
         }
+
+        file_tape::config tape_config;
+
         try
         {
-            const auto tape_config = file_tape::config(config_file);
+            tape_config = file_tape::config(config_file);
         }
         catch(const std::runtime_error& e)
         {

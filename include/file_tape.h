@@ -33,13 +33,13 @@ public:
 
     file_tape(const std::filesystem::path& filepath, const config& cfg = {});
 
-    int read() const override noexcept;
+    int read() const noexcept override;
 
-    void write(int value) override noexcept;
+    void write(int value) noexcept override;
 
-    bool move_left() const override noexcept;
+    bool move_left() const noexcept override;
 
-    bool move_right() const override noexcept;    
+    bool move_right() const noexcept override;    
 
     ~file_tape();
 
