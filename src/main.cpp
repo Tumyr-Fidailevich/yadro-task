@@ -2,10 +2,19 @@
 #include "tape_sorting.h"
 #include <cxxopts.hpp>
 #include <iostream>
+#include <csignal>
+
+
+void signalHandler(int signum) {
+    std::cout << "Shutdown client" << std::endl;
+    exit(signum);
+}
 
 
 int main(int argc, char* argv[])
 {
+    std::signal(SIGINT, signalHandler);
+    
     cxxopts::Options options("main", "Description");
 
     options.add_options()
