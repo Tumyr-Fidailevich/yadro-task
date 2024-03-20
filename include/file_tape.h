@@ -4,6 +4,8 @@
 #include "pch.h"
 #include "tape_interface.h"
 
+static const std::filesystem DEFAULT_TAPE_CONFIG_PATH;
+
 class file_tape : public tape_interface
 {
 public:
@@ -11,7 +13,7 @@ public:
     {
         config() = default;
 
-        explicit config(const std::string& filename);
+        explicit config(const std::filesystem::path& filepath = DEFAULT_TAPE_CONFIG_PATH);
 
         explicit config(const config& other) = default;
 
@@ -21,21 +23,22 @@ public:
         std::chrono::milliseconds rewindTime{0};
     };
 
-    file_tape(const std::string& filename, const config& cfg = {});
+    file_tape(const std::filesystem::path& filepath, const config& cfg = {});
 
-    int read() const override;
+    int read() const override noexcept;
 
-    void write(int value) override;
+    void write(int value) override noexcept;
 
-    bool move_left() const override;
+    bool move_left() const override noexcept;
 
-    bool move_right() const override;    
+    bool move_right() const override noexcept;    
 
 private:
     config _config;
     mutable std::fstream _file;
     static const std::size_t FILL_DIGITS_NUMBER;
     static const char FILL_CHAR;
+
 
     std::size_t _size;
     std::size_t _pos;
