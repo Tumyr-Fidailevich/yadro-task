@@ -1,5 +1,8 @@
-#include <iostream>
+#include "file_tape.h"
+#include "tape_sorting.h"
 #include <cxxopts.hpp>
+#include <iostream>
+
 
 int main(int argc, char* argv[])
 {
@@ -41,10 +44,12 @@ int main(int argc, char* argv[])
         if (result.count("config")) {
             config_file = result["config"].as<std::string>();
         }
+        
+        const auto tape_config = file_tape::config(config_file);
+        const auto source_tape = file_tape(input_file, tape_config);
+        auto dst_tape = file_tape(output_file, tape_config);
 
-        std::cout << "Input file: " << input_file << std::endl;
-        std::cout << "Output file: " << output_file << std::endl;
-        std::cout << "Config file: " << config_file << std::endl;
+        tape_sorting(source_tape, dst_tape);
 
         return 0;
     } catch (const cxxopts::OptionException& e) {
