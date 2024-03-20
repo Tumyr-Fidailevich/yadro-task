@@ -102,12 +102,15 @@ file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) :
 
 int file_tape::read() const noexcept
 {
-    return {};
+    std::this_thread::sleep_for(_config.readTime);
+    int res;
+    _file >> res;
+    return res;
 }
 
 void file_tape::write(int value) noexcept
 {
-
+    std::this_thread::sleep_for(_config.writeTime);
 }
 
 bool file_tape::move_left() const noexcept
@@ -118,6 +121,12 @@ bool file_tape::move_left() const noexcept
 bool file_tape::move_right() const noexcept
 {
     return {};
+}
+
+void file_tape::rewind() const noexcept
+{
+    std::this_thread::sleep_for(_config.rewindTime);
+    _pos = 0;
 }
 
 file_tape::~file_tape()

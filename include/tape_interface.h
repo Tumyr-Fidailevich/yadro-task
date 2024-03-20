@@ -13,10 +13,7 @@ public:
 
     virtual bool move_right() const noexcept = 0;
 
-    void rewind() const noexcept
-    {
-        while(move_left());
-    }
+    void rewind() const noexcept = 0;
 
     virtual ~tape_interface() = default;
 };

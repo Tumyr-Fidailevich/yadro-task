@@ -41,6 +41,8 @@ public:
 
     bool move_right() const noexcept override;    
 
+    void rewind() const noexcept override;
+
     ~file_tape();
 
 private:
@@ -50,8 +52,8 @@ private:
     static const char FILL_CHAR;
 
 
-    std::size_t _size;
-    std::size_t _pos;
+    mutable std::size_t _size;
+    mutable std::size_t _pos;
 };
 
 #endif // FILE_TAPE_H
