@@ -1,7 +1,6 @@
 #include "file_tape.h"
 
 
-const std::size_t file_tape::FILL_DIGITS_NUMBER = std::to_string(std::numeric_limits<int>::min()).size();
 const char file_tape::FILL_CHAR = ' ';
 
 
@@ -90,43 +89,81 @@ void file_tape::config::full_trim(std::string& s) noexcept
     rtrim(s);
 }
 
-file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) : _file(filepath, std::ios::in, std::ios::out), _config(cfg), _pos(0)
+file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) : _file(filepath, std::ios::in | std::ios::out), _config(cfg), _pos(0)
 {
     if(!_file.is_open())
     {
         throw std::runtime_error("Cannot open or create " + filepath.filename().u8string());
     }
 
-    _size = (std::filesystem::file_size(filepath) + 1) / (FILL_DIGITS_NUMBER + 1);
+    _size = (std::filesystem::file_size(filepath) + 1) / FILL_DIGITS_NUMBER;
+
+    _file.seekp(_pos);
+    _file.seekg(_pos);
 }
 
 int file_tape::read() const noexcept
 {
     std::this_thread::sleep_for(_config.readTime);
-    int res;
-    _file >> res;
-    return res;
+
+    char buffer[FILL_DIGITS_NUMBER + 1];
+    _file.read(buffer, FILL_DIGITS_NUMBER);
+    buffer[FILL_DIGITS_NUMBER] = '\0';
+
+    _file.seekp(_pos * FILL_DIGITS_NUMBER);
+    _file.seekg(_pos * FILL_DIGITS_NUMBER);
+
+    int value = std::stoi(buffer);
+    return value;
 }
 
 void file_tape::write(int value) noexcept
 {
     std::this_thread::sleep_for(_config.writeTime);
+
+    std::stringstream ss;
+    ss << std::setw(FILL_DIGITS_NUMBER) << std::setfill(FILL_CHAR) << value;
+    _file.write(ss.str().c_str(), FILL_DIGITS_NUMBER);
+
+    update_pos();
 }
 
 bool file_tape::move_left() const noexcept
 {
-    return {};
+    if(_pos == 0) return false;
+    std::this_thread::sleep_for(_config.moveTime);
+    _pos--;
+    update_pos();
+    return true;
 }
 
 bool file_tape::move_right() const noexcept
 {
-    return {};
+    if(_pos == _size - 1) return false;
+    std::this_thread::sleep_for(_config.moveTime);
+    _pos--;
+    update_pos();
+    return true;
 }
 
 void file_tape::rewind() const noexcept
 {
     std::this_thread::sleep_for(_config.rewindTime);
     _pos = 0;
+    update_pos();
+}
+
+void file_tape::update_pos() const noexcept
+{
+    _file.seekg(_pos * FILL_DIGITS_NUMBER);
+    _file.seekp(_pos * FILL_DIGITS_NUMBER);
+}
+
+std::string file_tape::get_str_repr() const noexcept
+{
+    std::stringstream ss;
+    ss << _file.rdbuf();
+    return ss.str();
 }
 
 file_tape::~file_tape()

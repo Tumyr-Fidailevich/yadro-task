@@ -9,5 +9,6 @@
 #include <thread>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 #endif // PCH_H

@@ -43,12 +43,16 @@ public:
 
     void rewind() const noexcept override;
 
+    void update_pos() const noexcept;
+
+    std::string get_str_repr() const noexcept;
+
     ~file_tape();
 
 private:
     config _config;
     mutable std::fstream _file;
-    static const std::size_t FILL_DIGITS_NUMBER;
+    static const std::size_t FILL_DIGITS_NUMBER = 11;
     static const char FILL_CHAR;
 
 

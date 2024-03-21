@@ -72,7 +72,11 @@ int main(int argc, char* argv[])
 
         return 0;
     } catch (const cxxopts::OptionException& e) {
-        std::cout << "Error parsing options: " << e.what() << std::endl;
+        std::cerr << "Error parsing options: " << e.what() << std::endl;
+        return 1;
+    } catch (const std::ios_base::failure& e)
+    {
+        std::cerr << "Error, corrupted file tape: " << e.what() << std::endl;
         return 1;
     }
 }
