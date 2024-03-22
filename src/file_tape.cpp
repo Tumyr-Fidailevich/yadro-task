@@ -15,7 +15,7 @@ file_tape::config::config(const std::filesystem::path& filepath)
 
     std::string line;
     bool is_corrupted = false;
-    while (configFile >> line) {
+    while (std::getline(configFile, line)) {
         auto equals_pos = line.find("=");
         if(equals_pos == std::string::npos)
         {
@@ -25,7 +25,7 @@ file_tape::config::config(const std::filesystem::path& filepath)
         {
             auto [key, value] = get_keyword_and_value(line, equals_pos);
 
-            if(value == -1) 
+            if(value < 0) 
             {
                 is_corrupted = true;
                 continue;
@@ -50,10 +50,10 @@ file_tape::config::config(const std::filesystem::path& filepath)
     if(is_corrupted) std::cerr << "Corrupted config file. Possible unexpected results.";
 }
 
-std::pair<std::string, int> file_tape::config::get_keyword_and_value(const std::string& str, std::size_t equals_pos)
+std::pair<std::string, int> file_tape::config::get_keyword_and_value(const std::string& str, std::size_t equals_pos) noexcept
 {
     auto key = str.substr(0, equals_pos);
-    auto str_value = str.substr(equals_pos, str.length());
+    auto str_value = str.substr(equals_pos + 1, str.length());
     full_trim(key);
     full_trim(str_value);
 

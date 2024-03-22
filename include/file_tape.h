@@ -21,14 +21,13 @@ public:
         std::chrono::milliseconds moveTime{0};
         std::chrono::milliseconds rewindTime{0};
 
-    protected:
-        std::pair<std::string, int> get_keyword_and_value(const std::string& str, std::size_t equals_pos);
+        static std::pair<std::string, int> get_keyword_and_value(const std::string& str, std::size_t equals_pos) noexcept;
 
-        inline void ltrim(std::string& s) noexcept;
+        static void ltrim(std::string& s) noexcept;
 
-        inline void rtrim(std::string& s) noexcept;
+        static void rtrim(std::string& s) noexcept;
 
-        inline void full_trim(std::string& s) noexcept;
+        static void full_trim(std::string& s) noexcept;
     };
 
     file_tape(const std::filesystem::path& filepath, const config& cfg = {});
@@ -60,4 +59,8 @@ private:
     mutable std::size_t _pos;
 };
 
+constexpr bool operator==(const file_tape::config& lhs, const file_tape::config& rhs)
+{
+    return lhs.readTime == rhs.readTime && lhs.writeTime == rhs.writeTime && lhs.rewindTime == rhs.rewindTime && lhs.moveTime == rhs.moveTime;
+}
 #endif // FILE_TAPE_H

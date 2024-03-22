@@ -10,5 +10,6 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <initializer_list>
 
 #endif // PCH_H

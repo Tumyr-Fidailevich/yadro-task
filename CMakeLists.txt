@@ -36,7 +36,7 @@ target_link_libraries(tape PUBLIC tape-lib cxxopts)
 
 if(BUILD_TESTS)
     enable_testing()
-    add_executable(test-tape test/main.cpp test/file_tape_test.h test/tape_config_test.h test/tape_sorting_test.h)
+    add_executable(test-tape test/main.cpp test/file_tape_test.h test/tape_config_test.h test/tape_sorting_test.h test/test_utils.h)
     target_link_libraries(test-tape PUBLIC tape-lib gtest_main)
     include(GoogleTest)
     gtest_discover_tests(test-tape)
