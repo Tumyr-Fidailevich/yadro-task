@@ -171,6 +171,16 @@ std::string file_tape::get_str_repr() const noexcept
     return ss.str();
 }
 
+std::size_t file_tape::size() const noexcept
+{
+    return _size;
+}
+
+std::size_t file_tape::pos() const noexcept
+{
+    return _pos;
+}
+
 file_tape::~file_tape()
 {
     _file.close();

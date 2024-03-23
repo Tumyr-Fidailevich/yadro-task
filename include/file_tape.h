@@ -44,6 +44,10 @@ public:
 
     std::string get_str_repr() const noexcept;
 
+    std::size_t size() const noexcept;
+
+    std::size_t pos() const noexcept;
+
     ~file_tape();
 
 protected:
