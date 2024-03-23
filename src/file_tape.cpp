@@ -98,6 +98,11 @@ file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) :
 
     _size = (std::filesystem::file_size(filepath) + 1) / FILL_DIGITS_NUMBER;
 
+    if(_size == 0)
+    {
+        throw std::runtime_error("Tape cannot be empty: " + filepath.filename().u8string());
+    }
+
     _file.seekp(_pos);
     _file.seekg(_pos);
 }

@@ -42,11 +42,12 @@ public:
 
     void rewind() const noexcept override;
 
-    void update_pos() const noexcept;
-
     std::string get_str_repr() const noexcept;
 
     ~file_tape();
+
+protected:
+    void update_pos() const noexcept;
 
 private:
     config _config;

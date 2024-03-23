@@ -83,7 +83,7 @@ TEST(ConfigTest, regularConfigTest)
     expected.rewindTime = std::chrono::milliseconds(1);
     expected.moveTime = std::chrono::milliseconds(1);
     EXPECT_EQ(cfg, expected);
-    std::remove(config_file_name.c_str());
+    std::filesystem::remove(config_file_name);
 }
 
 TEST(ConfigTest, configWithMissedArgNames)
@@ -97,5 +97,5 @@ TEST(ConfigTest, configWithMissedArgNames)
     expected.rewindTime = std::chrono::milliseconds(0);
     expected.moveTime = std::chrono::milliseconds(1);
     EXPECT_EQ(cfg, expected);
-    std::remove(config_file_name.c_str());
+    std::filesystem::remove(config_file_name);
 }
