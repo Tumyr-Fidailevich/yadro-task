@@ -141,7 +141,7 @@ bool file_tape::move_right() const noexcept
 {
     if(_pos == _size - 1) return false;
     std::this_thread::sleep_for(_config.moveTime);
-    _pos--;
+    _pos++;
     update_pos();
     return true;
 }
