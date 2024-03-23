@@ -1,7 +1,12 @@
+#ifndef TEST_UTILS_H
+#define TEST_UTILS_H
+
+
 #include <fstream>
 #include <string>
-#include <sstream>
 #include <filesystem>
+#include <iomanip>
+
 
 namespace
 {
@@ -20,4 +25,24 @@ namespace
         return config_file_name;
     }
 
+    std::filesystem::path create_temp_tape(const std::vector<int>& elements)
+    {
+        auto target_path = std::filesystem::current_path() / "temp";
+
+        std::filesystem::create_directory(target_path);
+
+        target_path /= "tape.txt";
+
+        std::fstream file(target_path, std::ios::out);
+
+        for(const auto& elem : elements)
+        {
+            file << std::setw(11) << std::setfill(' ') << elem;
+        }
+
+        file.close();
+        return target_path;
+    }
 }
+
+#endif // TEST_UTILS_H
