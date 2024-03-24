@@ -32,6 +32,8 @@ public:
 
     file_tape(const std::filesystem::path& filepath, const config& cfg = {});
 
+    file_tape(const std::filesystem::path& filepath, std::size_t tape_size, const config& cfg = {});
+
     int read() const noexcept override;
 
     void write(int value) noexcept override;

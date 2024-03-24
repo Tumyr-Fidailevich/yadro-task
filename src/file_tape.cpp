@@ -103,21 +103,43 @@ file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) :
         throw std::runtime_error("Tape cannot be empty: " + filepath.filename().u8string());
     }
 
-    _file.seekp(_pos);
-    _file.seekg(_pos);
+    update_pos();
+}
+
+file_tape::file_tape(const std::filesystem::path& filepath, std::size_t tape_size, const config& cfg) : _file(filepath, std::ios::in | std::ios::out), _config(cfg), _pos(0)
+{
+    if(tape_size == 0)
+    {
+        throw std::runtime_error("Tape cannot be empty: " + filepath.filename().u8string());
+    }
+    _size = tape_size;
+
+    if(std::filesystem::file_size(filepath) != 0)
+    {
+        std::cout << "The output tape file " << filepath.filename() << " will be overwritten" << std::endl;
+    }
+    _file.clear();
+
+    std::string spaces(_size * FILL_DIGITS_NUMBER, FILL_CHAR);
+
+    _file << spaces;
+
+    update_pos();
 }
 
 int file_tape::read() const noexcept
 {
     std::this_thread::sleep_for(_config.readTime);
 
-    char buffer[FILL_DIGITS_NUMBER + 1];
-    _file.read(buffer, FILL_DIGITS_NUMBER);
+    std::string buffer;
+    buffer.resize(FILL_DIGITS_NUMBER);
+    _file.read(&buffer[0], FILL_DIGITS_NUMBER);
     buffer[FILL_DIGITS_NUMBER] = '\0';
 
     _file.seekp(_pos * FILL_DIGITS_NUMBER);
     _file.seekg(_pos * FILL_DIGITS_NUMBER);
 
+    if(buffer.find_first_not_of(" \t\n\v\f\r") == std::string::npos) return 0;
     int value = std::stoi(buffer);
     return value;
 }

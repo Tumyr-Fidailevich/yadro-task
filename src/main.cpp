@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
         }
         
         const auto source_tape = file_tape(input_file, tape_config);
-        auto dst_tape = file_tape(output_file, tape_config);
+        auto dst_tape = file_tape(output_file, source_tape.size(), tape_config);
 
         tape_sorting(source_tape, dst_tape);
 
@@ -77,6 +77,10 @@ int main(int argc, char* argv[])
     } catch (const std::ios_base::failure& e)
     {
         std::cerr << "Error, corrupted file tape: " << e.what() << std::endl;
+        return 1;
+    } catch (const std::invalid_argument& e)
+    {
+        std::cerr << "Error, cant read from file tape" << e.what() << std::endl;
         return 1;
     }
 }
