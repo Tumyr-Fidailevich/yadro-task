@@ -93,13 +93,16 @@ void merge_blocks(tape_ptr& tape, const tape_factory& factory, std::size_t block
 void merge_tapes(const std::vector<tape_ptr>& temp_tapes, tape_interface& dst_tape)
 {
     for(const auto& temp_tape : temp_tapes) temp_tape->rewind();
+    std::unordered_set<std::size_t> ended_tapes;
+    std:
     do
     {
         int min = INT_MAX;
         int min_tape_pos = 0;
         for(std::size_t tape_pos = 0; tape_pos < temp_tapes.size(); tape_pos++)
         {
-            if(temp_tapes[tape_pos]->pos() == temp_tapes[tape_pos]->size()) continue;
+            if(ended_tapes.find(tape_pos) != ended_tapes.end()) continue;
+
             int value = temp_tapes[tape_pos]->read();
             if(min > value)
             {
@@ -107,7 +110,7 @@ void merge_tapes(const std::vector<tape_ptr>& temp_tapes, tape_interface& dst_ta
                 min = value;
             }
         }
-        temp_tapes[min_tape_pos]->move_right();
+        if(!temp_tapes[min_tape_pos]->move_right()) ended_tapes.emplace(min_tape_pos);
         dst_tape.write(min);
     } while (dst_tape.move_right());
 

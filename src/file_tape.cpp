@@ -121,9 +121,6 @@ file_tape::file_tape(const std::filesystem::path& filepath, std::size_t tape_siz
             throw std::runtime_error("Cannot create " + filepath.filename().u8string());
         }
         temp.close();
-    }else
-    {
-        std::cout << "The output tape file " << filepath.filename().u8string() << " will be overwritten" << std::endl;   
     }
     
     _file = std::fstream(filepath);

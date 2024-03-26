@@ -15,5 +15,7 @@
 #include <typeinfo>
 #include <cmath>
 #include <unordered_map>
+#include <random> 
+#include <unordered_set>
 
 #endif // PCH_H
