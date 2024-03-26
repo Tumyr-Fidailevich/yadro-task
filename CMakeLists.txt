@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(BUILD_TESTS OFF)
 
-set(SOURCES src/file_tape.cpp src/tape_sorting.cpp)
-set(HEADERS include/tape_interface.h include/file_tape.h include/tape_sorting.h)
+set(SOURCES src/file_tape.cpp src/tape_sorting.cpp src/tape_factory.cpp)
+set(HEADERS include/tape_interface.h include/file_tape.h include/tape_sorting.h include/tape_factory.h)
 
 include(FetchContent)
 

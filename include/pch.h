@@ -11,5 +11,9 @@
 #include <iostream>
 #include <sstream>
 #include <initializer_list>
+#include <memory>
+#include <typeinfo>
+#include <cmath>
+#include <unordered_map>
 
 #endif // PCH_H

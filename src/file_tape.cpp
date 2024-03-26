@@ -1,9 +1,6 @@
 #include "file_tape.h"
 
 
-const char file_tape::FILL_CHAR = ' ';
-
-
 file_tape::config::config(const std::filesystem::path& filepath) 
 {
     std::ifstream configFile(filepath);
@@ -89,11 +86,13 @@ void file_tape::config::full_trim(std::string& s) noexcept
     rtrim(s);
 }
 
-file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) : _file(filepath, std::ios::in | std::ios::out), _config(cfg), _pos(0)
+file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) : _config(cfg), _pos(0)
 {
+    _file = std::fstream(filepath);
+
     if(!_file.is_open())
     {
-        throw std::runtime_error("Cannot open or create " + filepath.filename().u8string());
+        throw std::runtime_error("Cannot open " + filepath.filename().u8string());
     }
 
     _size = (std::filesystem::file_size(filepath) + 1) / FILL_DIGITS_NUMBER;
@@ -106,7 +105,7 @@ file_tape::file_tape(const std::filesystem::path& filepath, const config& cfg) :
     update_pos();
 }
 
-file_tape::file_tape(const std::filesystem::path& filepath, std::size_t tape_size, const config& cfg) : _file(filepath, std::ios::in | std::ios::out), _config(cfg), _pos(0)
+file_tape::file_tape(const std::filesystem::path& filepath, std::size_t tape_size, const config& cfg) : _config(cfg), _pos(0)
 {
     if(tape_size == 0)
     {
@@ -114,11 +113,25 @@ file_tape::file_tape(const std::filesystem::path& filepath, std::size_t tape_siz
     }
     _size = tape_size;
 
-    if(std::filesystem::file_size(filepath) != 0)
+    if(!std::filesystem::exists(filepath))
     {
-        std::cout << "The output tape file " << filepath.filename() << " will be overwritten" << std::endl;
+        std::ofstream temp(filepath);
+        if(!temp.is_open())
+        {
+            throw std::runtime_error("Cannot create " + filepath.filename().u8string());
+        }
+        temp.close();
+    }else
+    {
+        std::cout << "The output tape file " << filepath.filename().u8string() << " will be overwritten" << std::endl;   
     }
-    _file.clear();
+    
+    _file = std::fstream(filepath);
+
+    if(!_file.is_open())
+    {
+        throw std::runtime_error("Cannot open " + filepath.filename().u8string());
+    }
 
     std::string spaces(_size * FILL_DIGITS_NUMBER, FILL_CHAR);
 
@@ -127,7 +140,16 @@ file_tape::file_tape(const std::filesystem::path& filepath, std::size_t tape_siz
     update_pos();
 }
 
-int file_tape::read() const noexcept
+file_tape::file_tape(file_tape&& other) noexcept
+{
+    _file.close();
+    _file = std::move(other._file);
+    _config = std::move(other._config),
+    _size = other._size;
+    _pos = other._pos;
+}
+
+int file_tape::read() const
 {
     std::this_thread::sleep_for(_config.readTime);
 

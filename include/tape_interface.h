@@ -5,7 +5,7 @@
 class tape_interface
 {    
 public:
-    virtual int read() const noexcept = 0;
+    virtual int read() const = 0;
 
     virtual void write(int) noexcept = 0;
 
@@ -14,6 +14,10 @@ public:
     virtual bool move_right() const noexcept = 0;
 
     virtual void rewind() const noexcept = 0;
+
+    virtual std::size_t size() const noexcept = 0;
+
+    virtual std::size_t pos() const noexcept = 0;
 
     virtual ~tape_interface() = default;
 };

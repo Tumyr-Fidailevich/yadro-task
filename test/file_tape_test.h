@@ -141,3 +141,15 @@ TEST(TapeTest, EmptyTapeTest)
         std::runtime_error);
     std::filesystem::remove(tape_path);
 }
+
+TEST(TapeTest, EmptyPathTest)
+{
+
+    std::size_t size = 10;
+
+    ASSERT_NO_THROW(
+        {
+            file_tape tape("out.txt", size);
+        });
+    std::filesystem::remove("out.txt");
+}

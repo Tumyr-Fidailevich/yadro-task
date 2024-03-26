@@ -1,5 +1,7 @@
 tmp/
 build/
+cmake-build-debug/
+.idea/
 .vscode/
 *.txt
 *.cfg

@@ -12,9 +12,9 @@ public:
     {
         config() = default;
 
-        explicit config(const std::filesystem::path& filepath);
+        config(const std::filesystem::path& filepath);
 
-        explicit config(const config& other) = default;
+        config(const config& other) = default;
 
         std::chrono::milliseconds readTime{0};
         std::chrono::milliseconds writeTime{0};
@@ -34,7 +34,9 @@ public:
 
     file_tape(const std::filesystem::path& filepath, std::size_t tape_size, const config& cfg = {});
 
-    int read() const noexcept override;
+    file_tape(file_tape&& other) noexcept;
+
+    int read() const override;
 
     void write(int value) noexcept override;
 
@@ -46,11 +48,11 @@ public:
 
     std::string get_str_repr() const noexcept;
 
-    std::size_t size() const noexcept;
+    std::size_t size() const noexcept override;
 
-    std::size_t pos() const noexcept;
+    std::size_t pos() const noexcept override;
 
-    ~file_tape();
+    ~file_tape() override;
 
 protected:
     void update_pos() const noexcept;
@@ -59,7 +61,7 @@ private:
     config _config;
     mutable std::fstream _file;
     static const std::size_t FILL_DIGITS_NUMBER = 11;
-    static const char FILL_CHAR;
+    static const char FILL_CHAR = ' ';
 
 
     mutable std::size_t _size;

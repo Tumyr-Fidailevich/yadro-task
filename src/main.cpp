@@ -1,8 +1,11 @@
 #include "file_tape.h"
 #include "tape_sorting.h"
+#include "tape_factory.h"
 #include <cxxopts.hpp>
 #include <csignal>
 
+
+const std::size_t DEFAULT_BYTES = 40;
 
 void signalHandler(int signum) {
     std::cout << "Shutdown client" << std::endl;
@@ -12,27 +15,35 @@ void signalHandler(int signum) {
 
 int main(int argc, char* argv[])
 {
+    setlocale(LC_ALL, "RU");
+
     std::signal(SIGINT, signalHandler);
     
-    cxxopts::Options options("main", "Description");
+    cxxopts::Options options("./tape", "This program sorts tapes consisting of integers from input tape to output tape");
 
     options.add_options()
         ("h,help", "Show help")
         ("i,input", "Input file", cxxopts::value<std::string>())
         ("o,output", "Output file", cxxopts::value<std::string>()->default_value("output.txt"))
-        ("c,config", "config file", cxxopts::value<std::string>());
+        ("c,config", "Config file", cxxopts::value<std::string>())
+        ("b,bytes", "Memory", cxxopts::value<int>()->default_value(std::to_string(DEFAULT_BYTES)))
+        ("t,tapes", "Temporary tapes", cxxopts::value<int>());
 
-    options.parse_positional({"input", "output", "config"});
+    options.parse_positional({"input", "output"});
+
+    options.positional_help("<input> <output>");
 
     try {
         auto result = options.parse(argc, argv);
 
         if (result.count("help")) {
+            options.show_positional_help();
             std::cout << options.help() << std::endl;
             return 0;
         }
 
         std::string input_file, output_file, config_file;
+        std::size_t bytes = DEFAULT_BYTES;
 
         if (result.count("input")) {
             input_file = result["input"].as<std::string>();
@@ -47,10 +58,23 @@ int main(int argc, char* argv[])
             output_file = result["output"].as<std::string>();
         } else if (result.arguments().size() >= 3) {
             output_file = result.arguments().at(2).as<std::string>();
+        }else
+        {
+            output_file = "output.txt";
         }
 
         if (result.count("config")) {
             config_file = result["config"].as<std::string>();
+        }
+
+        if (result.count("bytes"))
+        {
+            bytes = result["bytes"].as<std::size_t>();
+            if(bytes == 0)
+            {
+                std::cerr << "Memory size cannot be negative or zero, set to default" << std::endl;
+                bytes = DEFAULT_BYTES;
+            }
         }
 
         file_tape::config tape_config;
@@ -61,14 +85,25 @@ int main(int argc, char* argv[])
         }
         catch(const std::runtime_error& e)
         {
-            std::cerr << e.what() << '\n';
             std::cout << "Config set to default" << std::endl;
         }
         
-        const auto source_tape = file_tape(input_file, tape_config);
-        auto dst_tape = file_tape(output_file, source_tape.size(), tape_config);
+        auto input_file_path = std::filesystem::current_path() / input_file;
+        auto output_file_path = std::filesystem::current_path() / output_file;
 
-        tape_sorting(source_tape, dst_tape);
+        const auto source_tape = file_tape(input_file_path, tape_config);
+        auto dst_tape = file_tape(output_file_path, source_tape.size(), tape_config);
+
+        const auto factory = file_tape_factory(tape_config);
+
+        if (result.count("tapes") && result["tapes"].as<int>() > 0)
+        {
+            std::cerr << "Number of temporary tapes cannot equals or less then zero, parameter ignored" << std::endl;
+            tape_sorting(source_tape, dst_tape, factory, bytes, result["tapes"].as<int>());
+        }else
+        {
+            tape_sorting(source_tape, dst_tape, factory, bytes);
+        }
 
         return 0;
     } catch (const cxxopts::OptionException& e) {
@@ -80,7 +115,11 @@ int main(int argc, char* argv[])
         return 1;
     } catch (const std::invalid_argument& e)
     {
-        std::cerr << "Error, cant read from file tape" << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
+        return 1;
+    } catch (const std::runtime_error& e)
+    {
+        std::cerr << e.what() << std::endl;
         return 1;
     }
 }
