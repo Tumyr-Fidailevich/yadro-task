@@ -13,7 +13,7 @@ Tapes are emulated using text files.
 ## Usage
 ### i/O file formats
 The tape class is emulated by interacting with file streams. 
-An integer can occupy a maximum of 11 characters, so 11 bytes will be allocated for each number in the file. 
+An integer can occupy a maximum of 11 characters, so 11 bytes will be allocated for each number in the file. Empty elements are considered zeros.
 Therefore, each individual number is read into a buffer of 11 characters. As a last resort, a valid 3-element tape format looks like this:
 <code>-2147483648-2147483648-2147483648</code>
 Which matches  `{-2147483648, -2147483648, -2147483648}`
