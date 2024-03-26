@@ -158,8 +158,7 @@ int file_tape::read() const
     _file.read(&buffer[0], FILL_DIGITS_NUMBER);
     buffer[FILL_DIGITS_NUMBER] = '\0';
 
-    _file.seekp(_pos * FILL_DIGITS_NUMBER);
-    _file.seekg(_pos * FILL_DIGITS_NUMBER);
+    update_pos();
 
     if(buffer.find_first_not_of(" \t\n\v\f\r") == std::string::npos) return 0;
     int value = std::stoi(buffer);

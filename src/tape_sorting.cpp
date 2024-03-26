@@ -54,7 +54,7 @@ void block_sort(const tape_interface& source_tape, tape_ptr& temp_tape, std::siz
 
 void merge_blocks(tape_ptr& tape, const tape_factory& factory, std::size_t block_size)
 {
-    if(tape->size() == block_size) return;
+    if(tape->size() <= block_size) return;
 
     std::size_t blocks_count = ceil_divide(tape->size(), block_size);
     std::vector<std::size_t> block_info(blocks_count, 0);
@@ -75,7 +75,7 @@ void merge_blocks(tape_ptr& tape, const tape_factory& factory, std::size_t block
             while(count++ < block_info[i] && tape->move_right());
 
             int value = tape->read();
-            if(min < value)
+            if(min > value)
             {
                 min_index = i;
                 min = value;
@@ -86,23 +86,22 @@ void merge_blocks(tape_ptr& tape, const tape_factory& factory, std::size_t block
         block_info[min_index]++;
         sub_tape->write(min);
     } while (sub_tape->move_right());
-    
-    
+
     tape.swap(sub_tape);
-    tape->rewind();
 }
 
 void merge_tapes(const std::vector<tape_ptr>& temp_tapes, tape_interface& dst_tape)
 {
+    for(const auto& temp_tape : temp_tapes) temp_tape->rewind();
     do
     {
         int min = INT_MAX;
         int min_tape_pos = 0;
         for(std::size_t tape_pos = 0; tape_pos < temp_tapes.size(); tape_pos++)
         {
-            if(temp_tapes[tape_pos]->pos() + 1 == temp_tapes[tape_pos]->size()) continue;
+            if(temp_tapes[tape_pos]->pos() == temp_tapes[tape_pos]->size()) continue;
             int value = temp_tapes[tape_pos]->read();
-            if(min < value)
+            if(min > value)
             {
                 min_tape_pos = tape_pos;
                 min = value;
@@ -111,6 +110,8 @@ void merge_tapes(const std::vector<tape_ptr>& temp_tapes, tape_interface& dst_ta
         temp_tapes[min_tape_pos]->move_right();
         dst_tape.write(min);
     } while (dst_tape.move_right());
+
+    dst_tape.rewind();
 }
 
 std::vector<std::size_t> split_parts(std::size_t n, std::size_t m)
@@ -163,6 +164,6 @@ void tape_sorting(const tape_interface& source_tape, tape_interface& dst_tape, c
 
 void tape_sorting(const tape_interface& source_tape, tape_interface& dst_tape, const tape_factory& factory, std::size_t temp_bytes)
 {
-    auto temp_tapes_count = source_tape.size() / (temp_bytes / sizeof(int));
+    auto temp_tapes_count = ceil_divide(source_tape.size(), temp_bytes / sizeof(int));
     tape_sorting(source_tape, dst_tape, factory, temp_bytes, temp_tapes_count);
 }
